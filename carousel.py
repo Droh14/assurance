@@ -13,6 +13,8 @@ def afficher_campagne():
     scenes = [
         ("plantation-cacao.png", "AU CŒUR DES TERROIRS IVOIRIENS", "Chaque récolte<br>porte un avenir.", "Préparez votre campagne cacao avec une vision claire de votre protection.", "Cacaoyers et producteur dans une plantation ivoirienne"),
         ("recolte-cacao.png", "DE LA PLANTATION À LA COOPÉRATIVE", "Une campagne se prépare.<br>Un revenu se protège.", "Quantités livrées, surfaces cultivées : vos données donnent du sens à votre estimation.", "Cabosses et fèves de cacao au moment de la récolte"),
+        ("productrice-cacao.png", "CULTIVER AUJOURD'HUI, PRÉPARER DEMAIN", "Votre plantation.<br>Votre avenir.", "Suivez les rendements de votre campagne pour mieux comprendre votre protection.", "Productrice ivoirienne entretenant les cacaoyers de sa plantation"),
+        ("cooperative-cacao.png", "ENSEMBLE, AU FIL DE LA CAMPAGNE", "Des producteurs unis.<br>Une filière plus forte.", "Producteur, coopérative, département : trois regards sur une même récolte.", "Producteurs d'une coopérative ivoirienne triant les fèves sur des tables de séchage"),
     ]
     slides = ""
     for i, (nom, kicker, titre, texte, alt) in enumerate(scenes):
@@ -22,7 +24,7 @@ def afficher_campagne():
     components.html("""<!doctype html><html lang="fr"><head><meta name="viewport" content="width=device-width, initial-scale=1"><style>
     *{box-sizing:border-box}body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:transparent}
     .campaign{height:435px;position:relative;overflow:hidden;border-radius:20px;background:#102c20;color:white}
-    .slide{position:absolute;inset:0;opacity:0;transition:opacity 1s ease;pointer-events:none}.slide.active{opacity:1}
+    .slide{position:absolute;inset:0;opacity:0;transition:opacity .65s ease;pointer-events:none}.slide.active{opacity:1}
     img{width:100%;height:100%;object-fit:cover;object-position:center}.shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,25,15,.88),rgba(5,25,15,.35) 65%,rgba(5,25,15,.07))}
     .copy{position:absolute;left:5%;right:6%;top:18%;max-width:640px}.eyebrow{font-size:11px;font-weight:700;letter-spacing:.16em;color:#f5c68b}
     h1{font-family:Georgia,serif;font-size:clamp(30px,4.8vw,56px);font-weight:500;line-height:1.08;letter-spacing:-.025em;margin:20px 0 18px}
@@ -33,13 +35,13 @@ def afficher_campagne():
     @media(max-width:600px){.campaign{border-radius:14px}.copy{top:21%;left:7%}h1{font-size:34px}p{font-size:13px;max-width:290px}.eyebrow{font-size:9px}.shade{background:linear-gradient(90deg,#05190fe0,#05190f55)}}
     @media(prefers-reduced-motion:reduce){.slide{transition:none}}
     </style></head><body><div class="campaign" role="region" aria-roledescription="carrousel" aria-label="La campagne cacao">
-    """ + slides + """<span class="credit">VISUELS DE CAMPAGNE · IA</span><div class="controls"><button id="prev" aria-label="Image précédente">‹</button><span class="counter" id="counter" aria-live="polite">01 / 02</span><button id="next" aria-label="Image suivante">›</button><button class="pause" id="pause" aria-label="Mettre le défilement en pause">Pause ❚❚</button></div></div>
+    """ + slides + f"""<span class="credit">VISUELS DE CAMPAGNE · IA</span><div class="controls"><button id="prev" aria-label="Image précédente">‹</button><span class="counter" id="counter" aria-live="polite">01 / {len(scenes):02d}</span><button id="next" aria-label="Image suivante">›</button><button class="pause" id="pause" aria-label="Mettre le défilement en pause">Pause ❚❚</button></div></div>""" + """
     <script>
     const slides=Array.from(document.querySelectorAll('.slide'));let index=0,timer=null;
     const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;let paused=reduced;
     const button=document.getElementById('pause');
-    function show(n){index=(n+slides.length)%slides.length;slides.forEach((s,i)=>{s.classList.toggle('active',i===index);s.setAttribute('aria-hidden',i!==index)});document.getElementById('counter').textContent=String(index+1).padStart(2,'0')+' / 02'}
-    function schedule(){clearInterval(timer);if(!paused)timer=setInterval(()=>show(index+1),6500);button.textContent=paused?'Lecture ▶':'Pause ❚❚';button.setAttribute('aria-label',paused?'Reprendre le défilement':'Mettre le défilement en pause')}
+    function show(n){index=(n+slides.length)%slides.length;slides.forEach((s,i)=>{s.classList.toggle('active',i===index);s.setAttribute('aria-hidden',i!==index)});document.getElementById('counter').textContent=String(index+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0')}
+    function schedule(){clearInterval(timer);if(!paused)timer=setInterval(()=>show(index+1),3000);button.textContent=paused?'Lecture ▶':'Pause ❚❚';button.setAttribute('aria-label',paused?'Reprendre le défilement':'Mettre le défilement en pause')}
     document.getElementById('prev').onclick=()=>{show(index-1);schedule()};document.getElementById('next').onclick=()=>{show(index+1);schedule()};button.onclick=()=>{paused=!paused;schedule()};schedule();
     document.addEventListener('visibilitychange',()=>{if(document.hidden)clearInterval(timer);else schedule()});
     </script></body></html>""", height=445, scrolling=False)
