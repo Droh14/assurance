@@ -1,3 +1,4 @@
+"""Réglages du modèle pour la session."""
 import streamlit as st
 
 from config import ALPHA_DEFAUT, CENTRES_DEFAUT, CLASSES, EXPOSANT_DEFAUT, PAIEMENTS_DEFAUT, POIDS_DEFAUT

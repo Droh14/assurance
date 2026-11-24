@@ -33,7 +33,7 @@ L'accueil propose un diaporama de campagne avec défilement automatique, navigat
 ## Autre hébergement : Render
 
 1. Créez un dépôt GitHub nommé `passir-calculateur`.
-2. Ajoutez les fichiers du projet, notamment le dossier `pages`, le dossier `assets`, le dossier `.streamlit`, `requirements.txt` et `render.yaml`. Ne publiez aucun secret.
+2. Ajoutez les fichiers du projet, notamment `app.py`, `accueil.py`, les dossiers `views`, `assets`, `.streamlit`, `requirements.txt` et `render.yaml`. Ne publiez aucun secret.
 3. Dans Render, choisissez **New > Blueprint** et connectez ce dépôt GitHub.
 4. Vérifiez le service `passir-calculateur` et son offre `free`, puis lancez le déploiement.
 5. À la fin du déploiement, ouvrez et partagez l'adresse HTTPS affichée par Render. Cette adresse permet d'accéder à l'accueil et au calculateur sans installer Python.

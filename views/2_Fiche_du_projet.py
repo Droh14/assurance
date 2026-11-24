@@ -1,3 +1,4 @@
+"""Présentation du projet PASSIR."""
 import pandas as pd
 import streamlit as st
 

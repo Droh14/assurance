@@ -1,27 +1,25 @@
-"""Accueil de PASSIR, au rythme de la campagne cacao."""
+"""Point d'entrée : accueil à l'ouverture, puis navigation libre."""
 import streamlit as st
-from carousel import afficher_campagne
-from ui import injecter_style
 
-st.set_page_config(page_title="PASSIR · Assurance récolte cacao", page_icon="🌱", layout="wide", initial_sidebar_state="collapsed")
-injecter_style()
-st.markdown("""<div class="brand-line"><div class="brand-mark">P</div><div>
-<div class="brand-title">PASSIR</div><div class="brand-subtitle">Assurance récolte · Côte d'Ivoire</div>
-</div></div>""", unsafe_allow_html=True)
-afficher_campagne()
-intro, action = st.columns([3, 1], vertical_alignment="center")
-with intro:
-    st.markdown("<div class='page-kicker'>Votre campagne, en perspective</div>", unsafe_allow_html=True)
-    st.subheader("Anticiper. Comprendre. Avancer.")
-    st.write("Reliez les rendements de votre plantation à ceux de votre coopérative et de votre département pour estimer votre indemnité récolte.")
-with action:
-    st.page_link("pages/1_Calculateur.py", label="Simuler mon indemnité", icon="🌱", use_container_width=True)
-for col, numero, titre, texte in zip(st.columns(3), ("01", "02", "03"),
-        ("Votre récolte", "Votre territoire", "Votre estimation"),
-        ("Renseignez les quantités et les surfaces de la campagne.",
-         "Comparez les rendements aux références des trois niveaux.",
-         "Consultez votre indemnité, votre cotisation et le détail du calcul.")):
-    with col:
-        st.markdown(f"<article class='workflow-card'><div class='workflow-index'>{numero}</div><h3>{titre}</h3><p>{texte}</p></article>", unsafe_allow_html=True)
-st.caption("Nawa · San-Pédro · Gbôklé · Cavally · Guémon · Tonkpi")
-st.caption("Montants estimatifs selon les paramètres du modèle. Visuels de campagne créés par IA.")
+st.set_page_config(
+    page_title="PASSIR · Assurance récolte cacao",
+    page_icon="🌱",
+    layout="wide",
+    initial_sidebar_state="collapsed",
+)
+
+accueil = st.Page("accueil.py", title="Accueil", icon="🏡", default=True)
+page = st.navigation([
+    accueil,
+    st.Page("views/1_Calculateur.py", title="Simulation", icon="🌱"),
+    st.Page("views/2_Fiche_du_projet.py", title="Le projet", icon="📖"),
+    st.Page("views/3_Parametres.py", title="Paramètres", icon="⚙️"),
+])
+
+# Une nouvelle visite commence à l'accueil, même depuis un lien de sous-page.
+if not st.session_state.get("_navigation_initialisee", False):
+    st.session_state["_navigation_initialisee"] = True
+    if page.url_path != accueil.url_path:
+        st.switch_page(accueil)
+
+page.run()

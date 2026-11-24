@@ -72,7 +72,7 @@ def injecter_style() -> None:
 
     with st.container(key="navigation"):
         with st.popover("☰ Menu", use_container_width=True):
-            st.page_link("app.py", label="Accueil", icon="🏡")
-            st.page_link("pages/1_Calculateur.py", label="Simulation", icon="🌱")
-            st.page_link("pages/2_Fiche_du_projet.py", label="Le projet", icon="📖")
-            st.page_link("pages/3_Parametres.py", label="Paramètres", icon="⚙️")
+            st.page_link("accueil.py", label="Accueil", icon="🏡")
+            st.page_link("views/1_Calculateur.py", label="Simulation", icon="🌱")
+            st.page_link("views/2_Fiche_du_projet.py", label="Le projet", icon="📖")
+            st.page_link("views/3_Parametres.py", label="Paramètres", icon="⚙️")
