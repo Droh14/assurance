@@ -24,7 +24,13 @@ L'application s'ouvre dans le navigateur. La page **Calculateur** contient un ex
 python -m pytest -q
 ```
 
-## Mise en ligne sur Render
+## Mise en ligne sur Streamlit Community Cloud
+
+Depuis https://share.streamlit.io/, choisissez **Create app**, le dépôt `Droh14/assurance`, la branche `main` et le fichier principal `app.py`, puis **Deploy**. Les dépendances sont installées à partir de `requirements.txt`.
+
+L'accueil propose un diaporama de campagne avec défilement automatique, navigation manuelle et pause. Le bouton **Menu** reste accessible sur chaque page. Après un calcul, une fenêtre présente la synthèse ; le détail et l'export CSV restent disponibles dans la page. Toute modification des données invalide l'ancien résultat.
+
+## Autre hébergement : Render
 
 1. Créez un dépôt GitHub nommé `passir-calculateur`.
 2. Ajoutez les fichiers du projet, notamment le dossier `pages`, le dossier `assets`, le dossier `.streamlit`, `requirements.txt` et `render.yaml`. Ne publiez aucun secret.

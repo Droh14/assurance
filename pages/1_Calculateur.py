@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
+from copy import deepcopy
 
 from calculs import classe_classique, degres_appartenance, indemnisation, prime_contrat, ratio, reference_moyenne_tronquee, rendement
 from config import ACTEURS, ALPHA_DEFAUT, ANNEES_CONTRAT, ARRONDI_AFFICHAGE, CENTRES_DEFAUT, CLASSES, EXEMPLE, EXPOSANT_DEFAUT, PAIEMENTS_DEFAUT, POIDS_DEFAUT, RATIOS_COURBE, RENDEMENT_REFERENCE_DEFAUT
@@ -11,7 +12,7 @@ from ui import injecter_style
 injecter_style()
 st.markdown("<div class='page-kicker'>Simulation guidée</div>", unsafe_allow_html=True)
 st.title("Calculateur d'indemnité")
-st.caption("Renseignez les données de campagne. Les montants sont des estimations pédagogiques, non une offre d'assurance.")
+st.caption("Renseignez votre campagne et consultez votre estimation d'indemnité.")
 
 def parametres():
     return st.session_state.get("parametres", {"centres": CENTRES_DEFAUT, "poids": POIDS_DEFAUT, "exposant": EXPOSANT_DEFAUT, "alpha": ALPHA_DEFAUT, "paiements": PAIEMENTS_DEFAUT})
@@ -27,8 +28,9 @@ def valeurs_exemple():
     st.session_state["assuree"] = EXEMPLE["assuree"]
     st.session_state["annee"] = EXEMPLE["annee"]
 
-if st.button("Charger l'exemple du document"):
+if st.button("Réinitialiser les données"):
     valeurs_exemple()
+    st.session_state.pop("resultat", None)
     st.rerun()
 
 if "q_Producteur" not in st.session_state:
@@ -67,22 +69,46 @@ c1, c2 = st.columns(2)
 superficie_assuree = c1.number_input("Superficie assurée du producteur (ha)", min_value=0.01, step=0.1, key="assuree")
 annee = c2.selectbox("Année du contrat", ANNEES_CONTRAT, key="annee")
 
+@st.dialog("Votre estimation de campagne", width="large")
+def afficher_estimation(data):
+    resultat, prime = data["calcul"], data["prime"]
+    st.markdown("<div class='result-reveal'>Votre simulation est prête.</div>", unsafe_allow_html=True)
+    a, b, c = st.columns(3)
+    a.metric("Indemnité totale", monnaie(resultat["indemnite_totale"]))
+    b.metric("Par hectare", monnaie(resultat["indemnite_ha"]))
+    c.metric("Après cotisation", monnaie(prime["gain_net"]))
+    st.caption(f"Campagne {data['contrat'][1]} · {data['contrat'][0]:.2f} hectares assurés. Montants estimatifs selon les paramètres du modèle.")
+    if st.button("Consulter le détail", type="primary"):
+        st.rerun()
+
+nouveau_resultat = False
+if "resultat" in st.session_state:
+    precedent = st.session_state.resultat
+    if (precedent["donnees"] != donnees or precedent["references"] != references
+            or precedent["contrat"] != (superficie_assuree, annee)
+            or precedent["params"] != parametres()):
+        st.session_state.pop("resultat")
+        st.info("Données modifiées. Lancez le calcul pour actualiser votre estimation.")
+
 if st.button("Calculer l'indemnité", type="primary", use_container_width=True):
     try:
         ratios = {acteur: ratio(*donnees[acteur], references[acteur]) for acteur in ACTEURS}
-        params = parametres()
+        params = deepcopy(parametres())
         resultat = indemnisation(ratios, superficie_assuree, **params)
         prime = prime_contrat(superficie_assuree, annee, resultat["indemnite_totale"])
         st.session_state.resultat = {"ratios": ratios, "donnees": donnees, "references": references, "contrat": (superficie_assuree, annee), "calcul": resultat, "prime": prime, "params": params}
+        nouveau_resultat = True
     except ValueError as erreur:
+        st.session_state.pop("resultat", None)
         st.error(str(erreur))
 
 if "resultat" in st.session_state:
     data = st.session_state.resultat
     ratios, result, prime, params = data["ratios"], data["calcul"], data["prime"], data["params"]
     moyenne = sum(ratios[a] * params["poids"][a] for a in ACTEURS)
-    phrase = "Aucune indemnité : la récolte est proche de la normale." if not result["seuil_atteint"] else "Une indemnité est estimée selon les trois niveaux de rendement."
+    phrase = "Le seuil de déclenchement n'est pas atteint : aucune indemnité estimée." if not result["seuil_atteint"] else "Une indemnité est estimée selon les trois niveaux de rendement."
     st.divider()
+    st.markdown("<div class='result-reveal'><strong>Résultats de votre campagne</strong><br>Votre indemnité et votre cotisation, en un regard.</div>", unsafe_allow_html=True)
     a, b, c = st.columns(3)
     a.metric("Indemnité totale", monnaie(result["indemnite_totale"]))
     b.metric("Indemnité par hectare", monnaie(result["indemnite_ha"]))
@@ -135,3 +161,6 @@ if "resultat" in st.session_state:
     export["indemnite_ha_fcfa"] = result["indemnite_ha"]
     export["indemnite_totale_fcfa"] = result["indemnite_totale"]
     st.download_button("Télécharger le détail en CSV", export.to_csv(index=False).encode("utf-8-sig"), "detail_passir.csv", "text/csv")
+    st.caption("Montants estimatifs selon les paramètres du modèle.")
+    if nouveau_resultat:
+        afficher_estimation(data)

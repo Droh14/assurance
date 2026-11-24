@@ -7,7 +7,7 @@ from ui import injecter_style
 injecter_style()
 st.markdown("<div class='page-kicker'>Réglages de la session</div>", unsafe_allow_html=True)
 st.title("Paramètres du modèle")
-st.markdown("<div class='note'>Ces valeurs sont illustratives. Elles doivent être calibrées avec des données réelles avant tout usage opérationnel.</div>", unsafe_allow_html=True)
+st.caption("Ajustez les paramètres utilisés pour vos simulations. Les modifications s'appliquent à votre session.")
 
 def defaults():
     return {"centres": CENTRES_DEFAUT.copy(), "poids": POIDS_DEFAUT.copy(), "exposant": EXPOSANT_DEFAUT, "alpha": ALPHA_DEFAUT, "paiements": PAIEMENTS_DEFAUT.copy()}
@@ -15,7 +15,7 @@ def defaults():
 if "parametres" not in st.session_state:
     st.session_state.parametres = defaults()
 
-if st.button("Rétablir les valeurs du document"):
+if st.button("Rétablir les paramètres par défaut"):
     st.session_state.parametres = defaults()
     st.rerun()
 

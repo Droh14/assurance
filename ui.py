@@ -13,7 +13,18 @@ def injecter_style() -> None:
       .stApp { background: var(--passir-cream); color: var(--passir-ink); font-family: Aptos, "Segoe UI", Inter, Arial, sans-serif; }
       .block-container { max-width: 1240px; padding-top: 2.15rem; padding-bottom: 3.5rem; }
       [data-testid="stHeader"] { background: rgba(247, 247, 242, .94); border-bottom: 1px solid rgba(19, 44, 34, .06); }
-      [data-testid="stDeployButton"], [data-testid="stHeader"] [data-testid="stToolbar"] { display: none !important; }
+      [data-testid="stDeployButton"] { display: none !important; }
+      .st-key-navigation { position: fixed; top: .55rem; right: 1.2rem; width: 145px; z-index: 999990; }
+      .st-key-navigation button { background: #fff !important; color: #132c22 !important; border: 1px solid #b9c8bd !important; }
+      [data-testid="stToolbar"] { margin-right: 160px; }
+      [data-testid="collapsedControl"], [data-testid="stSidebarCollapsedControl"] { visibility: visible !important; opacity: 1 !important; z-index: 999991; }
+      .brand-line { display:flex; align-items:center; gap:12px; margin: .7rem 0 1.1rem; }
+      .brand-mark { width:38px; height:38px; border-radius:12px; background:#143d2a; color:#f6bd74; display:grid; place-items:center; font-family:Georgia,serif; font-size:24px; }
+      .brand-title { font-size:1.1rem; font-weight:800; letter-spacing:.12em; color:#143d2a; }
+      .brand-subtitle { font-size:.76rem; color:#52665b; }
+      .result-reveal { padding:1rem 1.2rem; border-left:4px solid #bb5200; background:#edf3eb; border-radius:12px; animation: reveal .55s ease-out; margin-bottom:1rem; }
+      @keyframes reveal { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+      @media (prefers-reduced-motion: reduce) { .result-reveal { animation:none; } }
       [data-testid="stSidebar"] { background: var(--passir-green-deep); border-right: 1px solid rgba(255,255,255,.10); }
       [data-testid="stSidebar"] * { color: #f7f7f2 !important; }
       [data-testid="stSidebarNav"] a { border-radius: 9px; margin: .14rem .45rem; padding: .65rem .75rem; opacity: .85; }
@@ -58,3 +69,10 @@ def injecter_style() -> None:
       @media (max-width: 700px) { .block-container { padding: 1.2rem 1rem 2rem; } .hero { border-radius: 16px; } }
     </style>
     """, unsafe_allow_html=True)
+
+    with st.container(key="navigation"):
+        with st.popover("☰ Menu", use_container_width=True):
+            st.page_link("app.py", label="Accueil", icon="🏡")
+            st.page_link("pages/1_Calculateur.py", label="Simulation", icon="🌱")
+            st.page_link("pages/2_Fiche_du_projet.py", label="Le projet", icon="📖")
+            st.page_link("pages/3_Parametres.py", label="Paramètres", icon="⚙️")
